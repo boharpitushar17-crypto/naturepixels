@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - Nature Pixels</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 1rem 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #4CAF50;
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.7rem 1.5rem;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #4CAF50;
+            color: white;
+        }
+
+        /* Gallery Grid */
+        .gallery-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            cursor: pointer;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .gallery-image {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gallery-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover .gallery-image img {
+            transform: scale(1.05);
+        }
+
+        /* Lightbox Modal */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            text-align: center;
+        }
+
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 10px;
+        }
+
+        .lightbox-caption {
+            color: white;
+            margin-top: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lightbox-close:hover {
+            color: #4CAF50;
+        }
+
+        .gallery-info {
+            padding: 1.5rem;
+        }
+
+        .gallery-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2e7d32;
+        }
+
+        .gallery-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .gallery-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .gallery-location {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .gallery-icon {
+            color: #4CAF50;
+            font-size: 1.2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">🌿 NATURE PIXELS</a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="gallery.html" class="active">Gallery</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Photo Gallery</h1>
+        <p>A collection of nature's most stunning moments captured around the world</p>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All Photos</button>
+            <button class="filter-btn" data-filter="mountains">Mountains</button>
+            <button class="filter-btn" data-filter="ocean">Ocean</button>
+            
+            <button class="filter-btn" data-filter="forest">Forest</button>
+            <button class="filter-btn" data-filter="desert">Desert</button>
+        </div>
+    </section>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-container">
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- Gallery items will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <div class="lightbox-content">
+            <div class="lightbox-image" id="lightboxImage"></div>
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Nature Pixels. All rights reserved.</p>
+        <p>Contact: naturepixels5@gmail.com | Phone: (916) 577-1390</p>
+    </footer>
+
+    <script>
+        // Gallery Data
+        // To add your own images:
+        // 1. Create an 'images' folder in the same directory as this HTML file
+        // 2. Add your images to that folder
+        // 3. Update the 'image' path below (e.g., "images/mountain1.jpg")
+        const galleryData = [
+            { title: "Parvati Valley", description: "Lost in the mountains, found in Kasol", location: "Kasol", category: "mountains", image: "mountain1.jpg" },
+            { title: "Dhanushkoti", description: "Powerful ocean waves at rameshwaram", location: "Rameshwaram", category: "ocean", image: "ocean1.jpg" },
+            { title: "Nilgiri Forest", description: "Ancient giants in morning mist", location: "Coonoor", category: "forest", image: "jungle.png" },
+            { title: "Toy Train", description: "Chasing clouds on the Toy Train", location: "Ooty", category: "desert", image: "train.png" },
+            { title: "Himalaya", description: "Crystal clear mountain", location: "Manali", category: "mountains", image: "himalaya.png" },
+            { title: "Night sea", description: "Night colors over the sea", location: "Chennai", category: "ocean", image: "nightsea.png" },
+        
+            { title: "Tea Garden", description: "Fall colors in full display", location: "Ooty", category: "forest", image: "ooty.png" },
+            { title: "Adiyogi", description: "In the presence of the Source. Where stillness meets the infinite.", location: "Coimbatore", category: "desert", image: "adiyogi.png" },
+            { title: "Mountain Peak", description: "Summit at first light", location: "Rohtang Pass", category: "mountains", image: "manali.png" },
+            { title: "Marina Beach", description: "Sun colors over the sea", location: "Chennai", category: "ocean", image: "marina.jpeg" },
+           
+            { title: "Sky Grove", description: "Peaceful bamboo forest path", location: "Ooty", category: "forest", image: "ootyforest.png" },
+            { title: "Taj Mahal", description: "Iconic desert rock formations", location: "Agra", category: "desert", image: "tajj.jpeg" },
+        ];
+
+        // Render Gallery
+        function renderGallery(filter = 'all') {
+            const grid = document.getElementById('galleryGrid');
+            const filtered = filter === 'all' 
+                ? galleryData 
+                : galleryData.filter(item => item.category === filter);
+
+            grid.innerHTML = filtered.map((item, index) => `
+                <div class="gallery-item" onclick="openLightbox(${galleryData.indexOf(item)})">
+                    <div class="gallery-image">
+                        <img src="${item.image}" alt="${item.title}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:3rem;color:white;\'>📷</div>';">
+                    </div>
+                    <div class="gallery-info">
+                        <h3 class="gallery-title">${item.title}</h3>
+                        <p class="gallery-description">${item.description}</p>
+                        <div class="gallery-meta">
+                            <span class="gallery-location">📍 ${item.location}</span>
+                            <span class="gallery-icon">❤️</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter Buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                renderGallery(this.dataset.filter);
+            });
+        });
+
+        // Lightbox
+        function openLightbox(index) {
+            const item = galleryData[index];
+            
+            document.getElementById('lightboxImage').innerHTML = `<img src="${item.image}" alt="${item.title}" style="max-width: 100%; max-height: 80vh; border-radius: 10px;">`;
+            document.getElementById('lightboxCaption').textContent = `${item.title} - ${item.location}`;
+            document.getElementById('lightbox').classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        // Close lightbox on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        // Initialize
+        renderGallery();
+    </script>
+</body>
+</html>

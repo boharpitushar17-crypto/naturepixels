@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Nature Pixels</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 1rem 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: #4CAF50;
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Products Section */
+        .products-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #ff5722;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-category {
+            color: #4CAF50;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2e7d32;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-sizes {
+            margin-bottom: 1rem;
+        }
+
+        .size-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .size-options {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .size-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .size-btn:hover,
+        .size-btn.selected {
+            border-color: #4CAF50;
+            background: #4CAF50;
+            color: white;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .add-to-cart-btn {
+            padding: 0.7rem 1.5rem;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .add-to-cart-btn:hover {
+            background: #2e7d32;
+            transform: scale(1.05);
+        }
+
+        /* Cart Modal */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-modal.active {
+            display: flex;
+        }
+
+        .cart-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .cart-close {
+            font-size: 2rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-total {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 1rem;
+            text-align: right;
+            color: #2e7d32;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.3s;
+        }
+
+        .checkout-btn:hover {
+            background: #2e7d32;
+        }
+
+        .checkout-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Checkout Form */
+        .checkout-form {
+            display: none;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #eee;
+        }
+
+        .checkout-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input.error {
+            border-color: #ff5722;
+        }
+
+        .error-message {
+            color: #ff5722;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .payment-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .payment-btn:hover {
+            background: #2e7d32;
+        }
+
+        .back-to-cart-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: transparent;
+            color: #666;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .back-to-cart-btn:hover {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        /* Checkout Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .order-summary {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+        }
+
+        .order-summary h3 {
+            margin-bottom: 1rem;
+            color: #2e7d32;
+            font-size: 1.2rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .checkout-total {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2e7d32;
+            text-align: right;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #4CAF50;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .back-btn {
+            flex: 1;
+            padding: 0.9rem;
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #e0e0e0;
+            border-color: #999;
+        }
+
+        .payment-btn {
+            flex: 2;
+            padding: 0.9rem;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .payment-btn:hover {
+            background: #2e7d32;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .back-btn {
+            flex: 1;
+            padding: 0.75rem;
+            background: transparent;
+            color: #666;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        .payment-btn {
+            flex: 2;
+        }
+
+        .checkout-total {
+            margin-top: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .cart-icon {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">🌿 NATURE PIXELS</a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="products.html" class="active">Products</a></li>
+                <li><a href="about.html">About</a></li>
+                <li>
+                    <div class="cart-icon" onclick="toggleCart()">
+                        🛒
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Premium Prints</h1>
+        <p>Museum-quality prints to bring nature's beauty into your home</p>
+    </section>
+
+    <!-- Products Grid -->
+    <div class="products-container">
+        <div class="products-grid" id="productsGrid">
+            <!-- Products will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2 id="modalTitle">Shopping Cart</h2>
+                <span class="cart-close" onclick="toggleCart()">&times;</span>
+            </div>
+            
+            <!-- Cart Items View -->
+            <div id="cartView">
+                <div id="cartItems"></div>
+                <div class="cart-total" id="cartTotal">Total: $0.00</div>
+                <button class="checkout-btn" onclick="showCheckoutForm()">Proceed to Checkout</button>
+            </div>
+            
+            <!-- Checkout Form View -->
+            <div id="checkoutView" style="display: none;">
+                <form id="checkoutForm" onsubmit="processPayment(event)">
+                    <div class="form-group">
+                        <label for="customerName">Full Name *</label>
+                        <input type="text" id="customerName" name="customerName" required placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customerEmail">Email Address *</label>
+                        <input type="email" id="customerEmail" name="customerEmail" required placeholder="your.email@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customerPhone">Mobile Number *</label>
+                        <input type="tel" id="customerPhone" name="customerPhone" required pattern="[0-9]{10}" placeholder="10-digit mobile number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customerAddress">Shipping Address *</label>
+                        <textarea id="customerAddress" name="customerAddress" required rows="3" placeholder="Enter complete shipping address"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customerCity">City *</label>
+                        <input type="text" id="customerCity" name="customerCity" required placeholder="City">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customerState">State *</label>
+                        <input type="text" id="customerState" name="customerState" required placeholder="State">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customerPincode">Pincode *</label>
+                        <input type="text" id="customerPincode" name="customerPincode" required pattern="[0-9]{6}" placeholder="6-digit pincode">
+                    </div>
+                    
+                    <div class="order-summary">
+                        <h3>Order Summary</h3>
+                        <div id="checkoutSummary"></div>
+                        <div class="checkout-total" id="checkoutTotal"></div>
+                    </div>
+                    
+                    <div class="form-buttons">
+                        <button type="button" class="back-btn" onclick="backToCart()">← Back to Cart</button>
+                        <button type="submit" class="payment-btn">Proceed to Payment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Nature Pixels. All rights reserved.</p>
+        <p>Contact: naturepixels5@gamil.com | Phone: (916) 577-1390</p>
+    </footer>
+
+    <!-- Razorpay Checkout Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+        // Product Data
+        // To add your own images:
+        // 1. Create a 'products' folder in the same directory as this HTML file
+        // 2. Add your product images to that folder
+        // 3. Update the 'image' path below to match your filenames
+        const products = [
+            { id: 1, title: "Guardian Bell", category: "Mountains", description: "A Guardian Bell is a small metal bell attached to a motorcycle's frame to ward off and bring good luck to the rider, traditionally most effective when received as a gift.", image: "bell.jpg", price: 199, bestseller: true },
+            
+        ];
+
+        let cart = [];
+        let selectedSizes = {};
+
+        // Render Products
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.title}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size:4rem;color:white;\'>📷</div>${product.bestseller ? '<span class=\'badge\'>Bestseller</span>' : ''}';">
+                        ${product.bestseller ? '<span class="badge">Bestseller</span>' : ''}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">${product.category}</div>
+                        <h3 class="product-title">${product.title}</h3>
+                        <p class="product-description">${product.description}</p>
+                        
+                       
+                        
+                        <div class="product-footer">
+                            <div class="product-price">₹${product.price}</div>
+                            <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Select Size
+        function selectSize(productId, size) {
+            selectedSizes[productId] = size;
+            renderProducts();
+        }
+
+        // Add to Cart
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const size = selectedSizes[productId] || '8x10';
+            
+            cart.push({
+                ...product,
+                size: size
+            });
+            
+            updateCart();
+            showNotification(`${product.title} added to cart!`);
+        }
+
+        // Update Cart
+        function updateCart() {
+            document.getElementById('cartCount').textContent = cart.length;
+            
+            const cartItems = document.getElementById('cartItems');
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p style="text-align: center; color: #666;">Your cart is empty</p>';
+                document.getElementById('cartTotal').textContent = 'Total: ₹0.00';
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            
+            cartItems.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <div>
+                        <strong>${item.title}</strong><br>
+                        <small>Size: ${item.size}</small>
+                    </div>
+                    <div>
+                        <strong>₹${item.price}</strong><br>
+                        <small style="color: #ff5722; cursor: pointer;" onclick="removeFromCart(${index})">Remove</small>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('cartTotal').textContent = `Total: ₹${total.toFixed(2)}`;
+        }
+
+        // Remove from Cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        // Toggle Cart
+        function toggleCart() {
+            const modal = document.getElementById('cartModal');
+            modal.classList.toggle('active');
+            // Reset to cart view when closing
+            if (!modal.classList.contains('active')) {
+                backToCart();
+            }
+        }
+
+        // Show Checkout Form
+        function showCheckoutForm() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            document.getElementById('cartView').style.display = 'none';
+            document.getElementById('checkoutView').style.display = 'block';
+            document.getElementById('modalTitle').textContent = 'Checkout';
+            
+            // Update checkout summary
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            const summaryHTML = cart.map(item => `
+                <div class="summary-item">
+                    <span>${item.title} (${item.size})</span>
+                    <span>₹${item.price}</span>
+                </div>
+            `).join('');
+            
+            document.getElementById('checkoutSummary').innerHTML = summaryHTML;
+            document.getElementById('checkoutTotal').innerHTML = `
+                <div class="summary-item" style="border-top: 2px solid #2e7d32; padding-top: 1rem; font-size: 1.2rem; font-weight: bold;">
+                    <span>Total Amount:</span>
+                    <span style="color: #2e7d32;">₹${total.toFixed(2)}</span>
+                </div>
+            `;
+        }
+
+        // Back to Cart
+        function backToCart() {
+            document.getElementById('cartView').style.display = 'block';
+            document.getElementById('checkoutView').style.display = 'none';
+            document.getElementById('modalTitle').textContent = 'Shopping Cart';
+            // Clear form
+            document.getElementById('checkoutForm').reset();
+        }
+
+        // Process Payment with Razorpay
+        function processPayment(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const formData = {
+                name: document.getElementById('customerName').value,
+                email: document.getElementById('customerEmail').value,
+                phone: document.getElementById('customerPhone').value,
+                address: document.getElementById('customerAddress').value,
+                city: document.getElementById('customerCity').value,
+                state: document.getElementById('customerState').value,
+                pincode: document.getElementById('customerPincode').value
+            };
+            
+            // Validate phone number
+            if (!/^[0-9]{10}$/.test(formData.phone)) {
+                alert('Please enter a valid 10-digit mobile number');
+                return;
+            }
+            
+            // Validate pincode
+            if (!/^[0-9]{6}$/.test(formData.pincode)) {
+                alert('Please enter a valid 6-digit pincode');
+                return;
+            }
+            
+            // Calculate total in paise (Razorpay requires amount in smallest currency unit)
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            const amountInPaise = Math.round(total * 100); // Convert rupees to paise
+            
+            // Razorpay Options
+            const options = {
+                key: 'rzp_live_SHU1pJN6rhz2Ay', // Your Razorpay Key ID
+                amount: amountInPaise, // Amount in paise
+                currency: 'INR',
+                name: 'Nature Pixels',
+                description: 'Premium Nature Photography Prints',
+                image: 'https://via.placeholder.com/150?text=NP', // You can replace with your logo URL
+                prefill: {
+                    name: formData.name,
+                    email: formData.email,
+                    contact: formData.phone
+                },
+                notes: {
+                    address: formData.address,
+                    city: formData.city,
+                    state: formData.state,
+                    pincode: formData.pincode,
+                    items: cart.map(item => `${item.title} (${item.size})`).join(', ')
+                },
+                theme: {
+                    color: '#4CAF50'
+                },
+                handler: function (response) {
+                    // Payment successful
+                    handlePaymentSuccess(response, formData);
+                },
+                modal: {
+                    ondismiss: function() {
+                        showNotification('Payment cancelled');
+                    }
+                }
+            };
+            
+            // Create Razorpay instance and open checkout
+            const razorpay = new Razorpay(options);
+            razorpay.open();
+        }
+
+        // Handle Payment Success
+        function handlePaymentSuccess(response, customerData) {
+            // Save order details
+            const orderDetails = {
+                orderId: response.razorpay_payment_id,
+                customer: customerData,
+                items: cart,
+                total: cart.reduce((sum, item) => sum + item.price, 0),
+                orderDate: new Date().toISOString(),
+                paymentStatus: 'Success'
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('lastOrder', JSON.stringify(orderDetails));
+            
+            // Show success message
+            alert(`Payment Successful! 
+Payment ID: ${response.razorpay_payment_id}
+
+Thank you for your order! You will receive a confirmation email shortly.`);
+            
+            // Clear cart
+            cart = [];
+            updateCart();
+            
+            // Close modal and reset
+            toggleCart();
+            
+            // Show success notification
+            showNotification('Order placed successfully!');
+        }
+
+        // Checkout (old function - kept for compatibility)
+        function checkout() {
+            showCheckoutForm();
+        }
+
+        // Show Notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: #4CAF50;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 5px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 3000;
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 2000);
+        }
+
+        // Initialize
+        renderProducts();
+    </script>
+</body>
+</html>
